@@ -1,0 +1,42 @@
+#!/usr/bin/env perl
+
+=pod
+
+    prove --exec="rock -r -sourcepath=. -sourcepath=source" test*/*.ooc
+
+is not safe. We need some retries.
+
+=cut
+
+use strict;
+use warnings;
+
+use File::Basename;
+use File::Path;
+use Test::Harness;
+
+my @tests = map { glob $_ } @ARGV;
+
+my $harness = TAP::Harness->new({
+#    verbosity => 1,
+#    exec => ['rock', '-r', '-sourcepath=.', '-sourcepath=source'],
+    exec => sub {
+        my ($harness, $test_file) = @_;
+
+        my $out = qx{rock -sourcepath=. -sourcepath=source $test_file 2>&1};
+        while ($out =~ /Naming conflict \(output binary\)/
+            or $out =~ /collect2: ld/) {
+            print "\ncleanup\n\n";
+            rmtree('.libs');
+            $out = qx{rock -sourcepath=. -sourcepath=source $test_file 2>&1};
+        }
+        print($out) if $out && $out ne "[ OK ]\n";
+
+        return [ './' . basename($test_file, '.ooc')];
+    },
+});
+
+my $results = $harness->runtests(@tests);
+
+exit($results->all_passed() ? 0 : 1);
+
