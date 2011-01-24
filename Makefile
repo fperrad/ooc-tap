@@ -23,6 +23,10 @@ codingstd: ../ooc-codingstd
 ../ooc-codingstd:
 	cd .. && git clone git://github.com/fperrad/ooc-codingstd.git
 
+README.html: README.md
+	Markdown.pl README.md > README.html
+
 clean:
 	rm -rf *_tmp/ .libs/
 	rm -f $(CODING_STD)
+	rm -f README.html
