@@ -19,16 +19,16 @@ my @tests = map { glob $_ } @ARGV;
 
 my $harness = TAP::Harness->new({
 #    verbosity => 1,
-#    exec => ['rock', '-r', '-sourcepath=.', '-sourcepath=source'],
+#    exec => ['rock', '-r', '--sourcepath=.', '--sourcepath=source'],
     exec => sub {
         my ($harness, $test_file) = @_;
 
-        my $out = qx{rock -sourcepath=. -sourcepath=source $test_file 2>&1};
+        my $out = qx{rock --sourcepath=. --sourcepath=source $test_file 2>&1};
         while ($out =~ /Naming conflict \(output binary\)/
             or $out =~ /collect2: ld/) {
             print "\ncleanup\n\n";
             rmtree('.libs');
-            $out = qx{rock -sourcepath=. -sourcepath=source $test_file 2>&1};
+            $out = qx{rock --sourcepath=. --sourcepath=source $test_file 2>&1};
         }
         print($out) if $out && $out ne "[ OK ]\n";
 

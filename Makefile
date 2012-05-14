@@ -18,7 +18,7 @@ CODING_STD := \
 
 
 codingstd: ../ooc-codingstd
-	prove --exec="rock -r -sourcepath=../ooc-codingstd/source" $(CODING_STD)
+	prove --exec="rock -r --sourcepath=../ooc-codingstd/source" $(CODING_STD)
 
 ../ooc-codingstd:
 	cd .. && git clone git://github.com/fperrad/ooc-codingstd.git
